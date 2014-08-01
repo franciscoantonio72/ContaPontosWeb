@@ -372,7 +372,7 @@ namespace ContaPontoWeb.Controllers
                     QtdePontos = Convert.ToDouble(item["Qtde_Pontos"].ToString()),
                     QtdeTestes = Convert.ToDouble(item["Qtde_Teste"].ToString()),
                     Situacao = item["Situacao"].ToString(),
-                    Data = item["Data"].ToString()
+                    Data = Convert.ToDateTime(item["Data"].ToString())
                 };
                 list.Add(Os);
             }
