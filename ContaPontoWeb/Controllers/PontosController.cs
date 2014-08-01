@@ -93,7 +93,8 @@ namespace ContaPontoWeb.Controllers
             {
                 sprintSelecionado = texto.Substring(0, 2);
                 semanaSelecionado = texto.Substring(3, 1);
-            }else
+            }
+            else
             {
                 sprintSelecionado = texto.Substring(0, 3);
                 semanaSelecionado = texto.Substring(4, 1);
@@ -174,7 +175,8 @@ namespace ContaPontoWeb.Controllers
             var listaSprint = new List<object>();
             foreach (DataRow item in retorno.Rows)
             {
-                var sprint = new {
+                var sprint = new
+                {
                     numeroSprint = item[0].ToString()
                 };
                 listaSprint.Add(sprint);
@@ -208,7 +210,8 @@ namespace ContaPontoWeb.Controllers
             //listaDevelopers.Add("-- Selecione Developer --");
             foreach (DataRow row in retorno.Rows)
             {
-                var developers = new {
+                var developers = new
+                {
                     Nome = row[0].ToString().ToUpper(),
                     Ponto = row[4].ToString().ToUpper(),
                     Teste = row[1].ToString().ToUpper()
@@ -217,7 +220,7 @@ namespace ContaPontoWeb.Controllers
                 listaDevelopers.Add(developers);
             }
 
-            return Json(listaDevelopers, "json", System.Text.Encoding.UTF8,JsonRequestBehavior.AllowGet);
+            return Json(listaDevelopers, "json", System.Text.Encoding.UTF8, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -338,7 +341,8 @@ namespace ContaPontoWeb.Controllers
             var list = new List<object>();
             foreach (DataRow item in lista.Rows)
             {
-                var pontos = new {
+                var pontos = new
+                {
                     Os = item["Os"].ToString(),
                     QtdePontos = Convert.ToDouble(item["Qtde_Pontos"].ToString()),
                     QtdeTestes = Convert.ToDouble(item["Qtde_Teste"].ToString()),
@@ -350,9 +354,51 @@ namespace ContaPontoWeb.Controllers
             return this.Json(list);
         }
 
+        [HttpGet]
+        public JsonResult getEnviarDados(string nome, string sprint, string semana)
+        {
+            var lsprint = sprint;
+            var lsemana = semana;
+            if (lsemana == "Todas")
+                lsemana = "0";
+            var lista = dao.RetornarDetalhes(nome, lsprint, lsemana);
+
+            var list = new List<object>();
+            foreach (DataRow item in lista.Rows)
+            {
+                var Os = new
+                {
+                    NumeroOs = item["Os"].ToString(),
+                    QtdePontos = Convert.ToDouble(item["Qtde_Pontos"].ToString()),
+                    QtdeTestes = Convert.ToDouble(item["Qtde_Teste"].ToString()),
+                    Situacao = item["Situacao"].ToString(),
+                    Data = item["Data"].ToString()
+                };
+                list.Add(Os);
+            }
+            return Json(list, "json", System.Text.Encoding.UTF8, JsonRequestBehavior.AllowGet);
+        }
+
         private string[] RetornarSprintDaSemana()
         {
             return dao.RetornarSprintDaSemana();
+        }
+
+        [HttpGet]
+        public JsonResult getRetornarSprintDaSemana()
+        {
+            var lista = RetornarSprintDaSemana();
+
+            for (int i = 0; i < lista.Count(); i++)
+            {
+                var Sprint = new
+                {
+                    NumeroSprint = lista[0],
+                    NumeroSemana = lista[1]
+                };
+                return Json(Sprint, "json", System.Text.Encoding.UTF8, JsonRequestBehavior.AllowGet);
+            }
+            return null;
         }
 
         [HttpPost]
